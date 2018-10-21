@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.frame.IDao.signInRecordIDao">
+	<resultMap id="BaseResultMap"
+		type="com.frame.model.SignInRecord">
+		<id column="Id" property="id" jdbcType="INTEGER" />
+		<result column="openid" property="openid" jdbcType="VARCHAR" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+	</resultMap>
+
+	<insert id="insert" parameterType="com.frame.model.SignInRecord">
+		insert into gp_signin_record(uid,openid)
+		values (#{uid,jdbcType=INTEGER} ,#{openid,jdbcType=VARCHAR})
+	</insert>
+
+
+	<select id="selectbyOpenid"
+		resultType="com.frame.model.SignInRecord"
+		parameterType="java.lang.String">
+		SELECT * FROM gp_signin_record where openid=
+		#{openid,jdbcType=VARCHAR}
+
+	</select>
+
+
+</mapper>

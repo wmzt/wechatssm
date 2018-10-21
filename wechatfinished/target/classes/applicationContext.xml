@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<!-- 自动扫描指定目录，将控制器加载到bean -->
+	<context:component-scan base-package="com.frame" />
+	
+	<!-- 注册Spring工具类springcontextutil -->
+    <bean id="springContextUtil" class="com.frame.util.SpringContextUtil"></bean>
+   
+   
+    <!-- 引入配置文件 -->  
+    <bean id="propertyConfigurer"  
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+        <property name="location" value="classpath:jdbc.properties" />  
+    </bean>  
+  
+	<!-- 配置 druid 数据源 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<!-- 基本属性 url、user、password、driverClass -->
+		<!--  	<property name="url" value="jdbc:mysql://localhost:3306/test?useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=false" />-->
+		<property name="username" value="${username}" />
+		<property name="password" value="${password}" />
+		<property name="driverClassName" value="${driver}" />
+		<property name="url" value="${url}" />
+		<!--  <property name="url" value="jdbc:mysql://47.93.48.144:3306/test?useUnicode=true&amp;characterEncoding=UTF-8" />-->
+		
+	</bean>
+	
+		<!-- 配置 sessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:com/frame/**/*Mapper.xml</value>
+				<value>classpath:mybatis/**/*Mapper.xml</value>
+			</list>
+		</property>
+	</bean>
+	
+	 <!-- IDAO接口所在包名，Spring会自动查找其下的类 -->  
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">  
+        <property name="basePackage" value="com.frame.IDao" />  
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>  
+    </bean>  
+	<!-- 配置 sqlSessionTemplate 持久化模板 -->
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 配置事物管理器 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 配置事物传播行为 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="get*" read-only="true" />
+			<tx:method name="find*" read-only="true" />
+			<tx:method name="select*" read-only="true" />
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- 配置事物切入点 -->
+	<aop:config>
+		<aop:pointcut expression="execution(* com.frame.service.*.*(..))" id="pointCut" />
+		<aop:pointcut expression="execution(* com.frame.dao.*.*(..))" id="pointCut" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="pointCut" />
+	</aop:config>
+
+	<!-- 开始声明式事务（事物注解） -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+</beans>

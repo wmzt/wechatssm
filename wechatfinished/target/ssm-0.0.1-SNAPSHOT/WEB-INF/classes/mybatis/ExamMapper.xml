@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.frame.IDao.ExamIDao" >
+  <resultMap id="BaseResultMap" type="com.frame.model.Exam" >
+    <id column="did" property="Id" jdbcType="INTEGER" />
+    <result column="resume_uid" property="uid" jdbcType="INTEGER" />
+    <result column="written_number" property="written_number" jdbcType="VARCHAR" />
+    <result column="written_time" property="written_time" jdbcType="VARCHAR" />
+    <result column="written_place" property="written_place" jdbcType="VARCHAR" />
+    <result column="written_room" property="written_room" jdbcType="VARCHAR" />
+  
+  </resultMap>
+
+    <select id="selectbyUid" resultType="com.frame.model.Exam" parameterType="java.lang.Integer">
+		SELECT * FROM  gp_company_written  where  resume_uid= #{uid,jdbcType=INTEGER}
+	
+	</select>
+ 
+
+ 
+</mapper>

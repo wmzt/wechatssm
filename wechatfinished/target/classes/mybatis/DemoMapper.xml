@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.frame.mapper.DemoMapper">
+		<!--  <insert id="insert" parameterType="com.frame.model.WXuser"> 
+	<insert id="insert" parameterType="java.util.Map">
+    insert into wxuser(Id, openid, name)
+    values (#{id,jdbcType=INTEGER}, #{openid,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR})
+    </insert>
+  -->
+
+	<insert id="insert" parameterType="java.util.Map">
+    insert into gp_signin_record(uid,openid)
+    values (#{uid,jdbcType=INTEGER} ,#{openid,jdbcType=VARCHAR})
+    </insert>
+    
+    <select id="selectbyUid" resultType="com.frame.model.Exam" parameterType="java.lang.Integer">
+		SELECT * FROM  gp_company_written  where  resume_uid= #{uid,jdbcType=INTEGER}
+	
+	</select>
+	<select id="selectbyOpenid" resultType="com.frame.model.Member" parameterType="java.lang.String">
+		SELECT * FROM  gp_members_bind  where  openid= #{openid,jdbcType=VARCHAR}
+	
+	</select>
+	
+	
+	<select id="getTest" resultType="java.util.Map">
+		SELECT * FROM signin_record
+	</select>
+	<select id="getTestbyId" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT * FROM  wxuser  where  openid= #{openid,jdbcType=VARCHAR}
+	
+	</select>
+</mapper>
